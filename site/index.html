@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PlayFab Port - Documentation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #000000;
+            --bg-secondary: #373737;
+            --bg-tertiary: #2a2a2a;
+            --text-primary: #149400;
+            --text-secondary: #b8b8b8;
+            --text-tertiary: #808080;
+            --accent-green: #149400;
+            --border-color: #1a1a1a;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Courier New', 'Courier Prime', monospace;
+            background-color: var(--bg-primary);
+            color: var(--text-secondary);
+            line-height: 1.7;
+            letter-spacing: 0.2px;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(2px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        header {
+            background: var(--bg-primary);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1.5rem 2rem;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            height: 70px;
+            backdrop-filter: blur(10px);
+            background-color: rgba(0, 0, 0, 0.95);
+        }
+
+        .logo {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--accent-green);
+            text-decoration: none;
+            letter-spacing: 1.2px;
+            font-family: 'Courier New', monospace;
+            text-transform: uppercase;
+        }
+
+        aside {
+            width: 260px;
+            background-color: var(--bg-primary);
+            border-right: 1px solid var(--border-color);
+            padding: 90px 0 0 0;
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            overflow-y: auto;
+            animation: fadeIn 0.5s ease-out;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-nav {
+            list-style: none;
+            flex: 1;
+        }
+
+        .sidebar-nav li {
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .sidebar-nav a {
+            display: block;
+            padding: 0.95rem 1.5rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 0.9rem;
+            border-left: 2px solid transparent;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 0.3px;
+        }
+
+        .sidebar-nav a:hover {
+            background-color: var(--bg-tertiary);
+            color: var(--accent-green);
+            padding-left: 1.7rem;
+        }
+
+        .sidebar-nav a.active {
+            background-color: var(--bg-tertiary);
+            border-left: 2px solid var(--accent-green);
+            color: var(--accent-green);
+            padding-left: 1.5rem;
+            font-weight: 600;
+        }
+
+        main {
+            margin-left: 260px;
+            margin-top: 70px;
+            flex: 1;
+            padding: 3.5rem 5rem;
+            animation: fadeIn 0.5s ease-out;
+            background: linear-gradient(135deg, #000000 0%, #0a0a0a 100%);
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            color: var(--accent-green);
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            font-family: 'Courier New', monospace;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            color: var(--text-primary);
+            margin-top: 2.5rem;
+            margin-bottom: 1.2rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            font-family: 'Courier New', monospace;
+        }
+
+        h3 {
+            font-size: 1.1rem;
+            color: var(--accent-green);
+            margin-top: 1.8rem;
+            margin-bottom: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            font-family: 'Courier New', monospace;
+        }
+
+        p {
+            margin-bottom: 1.2rem;
+            color: var(--text-secondary);
+            line-height: 1.8;
+            font-size: 0.95rem;
+        }
+
+        .content-section {
+            display: none;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        .code-block {
+            background-color: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 1.5rem;
+            margin: 1.8rem 0;
+            overflow-x: auto;
+            font-size: 0.85rem;
+            line-height: 1.7;
+            color: var(--accent-green);
+            font-family: 'Courier New', monospace;
+            letter-spacing: 0.2px;
+            transition: all 0.3s ease;
+        }
+
+        .code-block:hover {
+            border-color: var(--accent-green);
+            background-color: #1a1a1a;
+        }
+
+        .card {
+            background-color: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 1.8rem;
+            margin: 1.5rem 0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card:hover {
+            border-color: var(--accent-green);
+            background-color: #1a1a1a;
+            transform: translateY(-2px);
+        }
+
+        .card h3 {
+            margin-top: 0;
+        }
+
+        .card p {
+            margin-bottom: 0;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .list-item {
+            margin-bottom: 1rem;
+            padding-left: 1.5rem;
+            position: relative;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        .list-item::before {
+            content: '●';
+            position: absolute;
+            left: 0;
+            color: var(--accent-green);
+        }
+
+        .highlight {
+            color: var(--accent-green);
+            font-weight: 600;
+            font-family: 'Courier New', monospace;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            background-color: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        table th,
+        table td {
+            padding: 1.2rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.95rem;
+        }
+
+        table th {
+            background-color: #0a0a0a;
+            color: var(--accent-green);
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            font-family: 'Courier New', monospace;
+        }
+
+        table tr:hover {
+            background-color: #1a1a1a;
+        }
+
+        table tr:last-child td {
+            border-bottom: none;
+        }
+
+        table td:first-child {
+            color: var(--accent-green);
+            font-weight: 600;
+            font-family: 'Courier New', monospace;
+        }
+
+        table td {
+            color: var(--text-secondary);
+        }
+
+        .footer-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 4rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border-color);
+            gap: 1rem;
+        }
+
+        .nav-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background-color: var(--bg-secondary);
+            color: var(--accent-green);
+            padding: 0.75rem 1.5rem;
+            text-decoration: none;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            font-family: 'Courier New', monospace;
+            cursor: pointer;
+            font-size: 0.95rem;
+        }
+
+        .nav-button:hover {
+            border-color: var(--accent-green);
+        }
+
+        .nav-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .page-indicator {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .sidebar-github {
+            padding: 1.5rem;
+            border-top: 1px solid var(--border-color);
+            margin-top: auto;
+        }
+
+        .github-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background-color: var(--bg-secondary);
+            color: var(--accent-green);
+            text-decoration: none;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        .github-button:hover {
+            border-color: var(--accent-green);
+        }
+
+        @media (max-width: 768px) {
+            aside {
+                width: 200px;
+            }
+
+            main {
+                margin-left: 200px;
+                padding: 2rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            h2 {
+                font-size: 1.5rem;
+            }
+
+            .footer-nav {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                flex-direction: column;
+            }
+
+            aside {
+                width: 100%;
+                position: relative;
+                top: auto;
+                left: auto;
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+                height: auto;
+                padding: 0;
+                margin-top: 70px;
+            }
+
+            main {
+                margin-left: 0;
+                margin-top: 0;
+                padding: 1.5rem;
+            }
+
+            .sidebar-nav a {
+                display: inline-block;
+                padding: 0.5rem 1rem;
+                border-bottom: none;
+                border-right: 1px solid var(--border-color);
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="#" class="logo">PlayFab Port</a>
+    </header>
+
+    <aside>
+        <ul class="sidebar-nav">
+            <li><a href="#" class="nav-link active" data-page="overview">Overview</a></li>
+            <li><a href="#" class="nav-link" data-page="installation">Installation</a></li>
+            <li><a href="#" class="nav-link" data-page="architecture">Architecture</a></li>
+            <li><a href="#" class="nav-link" data-page="authentication">Authentication</a></li>
+            <li><a href="#" class="nav-link" data-page="database">Database</a></li>
+            <li><a href="#" class="nav-link" data-page="api">API Reference</a></li>
+            <li><a href="#" class="nav-link" data-page="security">Security</a></li>
+            <li><a href="#" class="nav-link" data-page="examples">Examples</a></li>
+        </ul>
+        <div class="sidebar-github">
+            <a href="https://github.com/polardev-ui/playfab-port" target="_blank" class="github-button">
+                <span>GitHub</span>
+            </a>
+        </div>
+    </aside>
+
+    <main>
+        <section id="overview" class="content-section active">
+            <h1>Overview</h1>
+            <p>PlayFab Port is an open-source backend wrapper that makes migrating from PlayFab to Supabase seamless for game developers.</p>
+
+            <h2>What is PlayFab Port?</h2>
+            <p>PlayFab Port provides a C# wrapper around Supabase, replicating PlayFab's functionality while leveraging the power of PostgreSQL, Row Level Security, and Edge Functions. It's designed for indie game developers who need a scalable, affordable backend.</p>
+
+            <h2>Why Migrate?</h2>
+            <p>PlayFab's free tier was recently reduced from 100,000 users to just 1,000 users. This dramatic cutback makes it impossible for indie developers to scale affordably. Supabase offers:</p>
+            <div class="list-item">500GB of database storage on the free tier</div>
+            <div class="list-item">Unlimited users without scaling costs</div>
+            <div class="list-item">Open-source PostgreSQL with full control</div>
+            <div class="list-item">No vendor lock-in – self-host if needed</div>
+            <div class="list-item">Row Level Security for built-in data protection</div>
+
+            <h2>Key Features</h2>
+            <div class="list-item">Device-based authentication using SystemInfo.deviceUniqueIdentifier</div>
+            <div class="list-item">Singleton SupabaseManager for easy integration</div>
+            <div class="list-item">Modular architecture for Gorilla Tag and general games</div>
+            <div class="list-item">Real-time data subscriptions via WebSocket</div>
+            <div class="list-item">Edge Functions for secure server-side logic</div>
+            <div class="list-item">Relational SQL schemas with built-in RLS policies</div>
+
+            <div class="footer-nav">
+                <div></div>
+                <a href="#" class="nav-button" onclick="switchPage('installation')">Next: Installation →</a>
+            </div>
+        </section>
+
+        <section id="installation" class="content-section">
+            <h1>Installation</h1>
+            <p>Get PlayFab Port up and running in your Unity project.</p>
+
+            <h2>Prerequisites</h2>
+            <div class="list-item">Unity 2020.3 LTS or newer</div>
+            <div class="list-item">A Supabase project (free tier at supabase.com)</div>
+            <div class="list-item">Supabase C# SDK installed in your project</div>
+
+            <h2>Step 1: Clone the Repository</h2>
+            <div class="code-block">
+git clone https://github.com/polardev-ui/playfab-port.git<br>
+cd playfab-port
+            </div>
+
+            <h2>Step 2: Copy Assets to Your Project</h2>
+            <p>Copy the Assets folder from PlayFab Port into your Unity project's Assets folder:</p>
+            <div class="code-block">
+Assets/SupabaseWrapper/
+├── Core/
+├── Copy/
+└── General/
+            </div>
+
+            <h2>Step 3: Install Supabase-C#</h2>
+            <p>Via NuGet (recommended for Unity Package Manager compatibility):</p>
+            <div class="code-block">
+dotnet add package Supabase.Core
+            </div>
+
+            <h2>Step 4: Configure Your Project</h2>
+            <p>Create a new GameObject in your loading scene and attach the <span class="highlight">SupabaseManager</span> component. In the inspector, paste your Supabase URL and Anon Key.</p>
+
+            <h2>Step 5: Run the Schema</h2>
+            <p>In your Supabase dashboard, navigate to the SQL Editor and run the appropriate schema file:</p>
+            <div class="code-block">
+schemas/general/schema.sql<br>
+or<br>
+schemas/copy/schema.sql
+            </div>
+
+            <div class="footer-nav">
+                <a href="#" class="nav-button" onclick="switchPage('overview')">← Previous: Overview</a>
+                <a href="#" class="nav-button" onclick="switchPage('architecture')">Next: Architecture →</a>
+            </div>
+        </section>
+
+        <section id="architecture" class="content-section">
+            <h1>Architecture</h1>
+            <p>Understand how PlayFab Port is structured and how components interact.</p>
+
+            <h2>System Design</h2>
+            <p>PlayFab Port follows a three-layer architecture:</p>
+
+            <h2>Layer 1: Core Engine</h2>
+            <p>The <span class="highlight">SupabaseManager</span> singleton initializes and manages your Supabase connection. It handles:</p>
+            <div class="list-item">Session initialization and validation</div>
+            <div class="list-item">Authentication state management</div>
+            <div class="list-item">Real-time subscription setup</div>
+
+            <h2>Layer 2: Security Layer</h2>
+            <p>PostgreSQL Row Level Security (RLS) policies ensure data isolation:</p>
+            <div class="list-item">Each user can only access their own data</div>
+            <div class="list-item">Sensitive operations trigger via the Anon Key safely</div>
+            <div class="list-item">Server-side Edge Functions handle privileged actions</div>
+
+            <h2>Layer 3: Application Layer</h2>
+            <p>Choose your implementation path based on your game type:</p>
+
+            <div class="card">
+                <h3>Copy (Gorilla Tag Replicas)</h3>
+                <p>Device ID authentication, cosmetics tracking, room management, and player metadata tailored for social VR games.</p>
+            </div>
+
+            <div class="card">
+                <h3>General (Standard Games)</h3>
+                <p>Email/password authentication, player profiles, XP/level systems, currency management, and leaderboards for all game types.</p>
+            </div>
+
+            <h2>Data Flow</h2>
+            <div class="code-block">
+Client (Unity) <br><br>
+    ↓ Auth Request ↓<br><br>
+SupabaseManager (Singleton)<br><br>
+    ↓ Send to Supabase ↓<br><br>
+Supabase (Auth + Database)<br><br>
+    ↓ RLS validates request ↓<br><br>
+PostgreSQL Database<br><br>
+    ↓ Returns encrypted token ↓<br><br>
+Client (Unity) – Now authenticated
+            </div>
+
+            <div class="footer-nav">
+                <a href="#" class="nav-button" onclick="switchPage('installation')">← Previous: Installation</a>
+                <a href="#" class="nav-button" onclick="switchPage('authentication')">Next: Authentication →</a>
+            </div>
+        </section>
+
+        <section id="authentication" class="content-section">
+            <h1>Authentication</h1>
+            <p>Learn how to authenticate players in your game using PlayFab Port.</p>
+
+            <h2>Authentication Methods</h2>
+            <p>PlayFab Port supports two primary authentication methods depending on your game type.</p>
+
+            <h2>Device ID Authentication (Copy)</h2>
+            <p>Used for Gorilla Tag replicas and similar VR games.</p>
+            <div class="code-block">
+GorillaAuth auth = GetComponent&lt;GorillaAuth&gt;();<br>
+await auth.AuthenticateGorilla();<br>
+<br>
+// Automatically uses SystemInfo.deviceUniqueIdentifier
+// No email or password required
+            </div>
+
+            <h2>Email/Password Authentication (General)</h2>
+            <p>Used for traditional games with player accounts.</p>
+
+            <h3>Sign Up</h3>
+            <div class="code-block">
+GeneralAuth auth = GetComponent&lt;GeneralAuth&gt;();<br>
+await auth.SignUp("player@game.com", "SecurePassword123", "PlayerName");
+            </div>
+
+            <h3>Sign In</h3>
+            <div class="code-block">
+GeneralAuth auth = GetComponent&lt;GeneralAuth&gt;();<br>
+await auth.SignIn("player@game.com", "SecurePassword123");
+            </div>
+
+            <h3>Session Management</h3>
+            <div class="code-block">
+// Check if user is authenticated<br>
+bool isAuthenticated = auth.IsAuthenticated();<br>
+<br>
+// Get current user ID<br>
+string userId = auth.GetCurrentUserId();<br>
+<br>
+// Refresh token<br>
+await auth.RefreshToken();
+            </div>
+
+            <h2>Best Practices</h2>
+            <div class="list-item">Always store sessions securely using PlayerPrefs encryption</div>
+            <div class="list-item">Implement token refresh before expiration (auto-handled by wrapper)</div>
+            <div class="list-item">Never expose your Service Key – use Anon Key only</div>
+            <div class="list-item">Validate sensitive actions on the server via Edge Functions</div>
+
+            <div class="footer-nav">
+                <a href="#" class="nav-button" onclick="switchPage('architecture')">← Previous: Architecture</a>
+                <a href="#" class="nav-button" onclick="switchPage('database')">Next: Database →</a>
+            </div>
+        </section>
+
+        <section id="database" class="content-section">
+            <h1>Database</h1>
+            <p>Understand the database schema and how to work with data.</p>
+
+            <h2>Schema Overview</h2>
+            <p>PlayFab Port provides pre-built SQL schemas optimized for game backends.</p>
+
+            <h2>General Schema Tables</h2>
+            <div class="card">
+                <h3>profiles</h3>
+                <p>Stores player profile information including username, displayname, and metadata.</p>
+            </div>
+
+            <div class="card">
+                <h3>player_stats</h3>
+                <p>Tracks XP, level, and currency (gold, gems, etc.) with Row Level Security.</p>
+            </div>
+
+            <div class="card">
+                <h3>inventory</h3>
+                <p>Manages player items with quantities and metadata. RLS ensures players only see their own inventory.</p>
+            </div>
+
+            <div class="card">
+                <h3>leaderboards</h3>
+                <p>Read-only materialized view for competitive rankings. Updated via Edge Functions.</p>
+            </div>
+
+            <h2>Copy Schema Tables</h2>
+            <div class="card">
+                <h3>players</h3>
+                <p>Gorilla Tag player data with device ID, cosmetics, and social info.</p>
+            </div>
+
+            <div class="card">
+                <h3>cosmetics</h3>
+                <p>Cosmetic tracking for hats, hand colors, and avatar customization.</p>
+            </div>
+
+            <div class="card">
+                <h3>rooms</h3>
+                <p>Room metadata and player presence tracking.</p>
+            </div>
+
+            <h2>Row Level Security</h2>
+            <p>All tables include RLS policies that automatically enforce data isolation:</p>
+            <div class="code-block">
+-- Example RLS policy (auto-generated)<br>
+CREATE POLICY player_own_data ON profiles<br>
+  FOR ALL<br>
+  TO authenticated<br>
+  USING (auth.uid() = user_id)<br>
+  WITH CHECK (auth.uid() = user_id);
+            </div>
+
+            <h2>Querying Data</h2>
+            <div class="code-block">
+// Get current player's stats<br>
+var stats = await GetComponent&lt;SupabaseManager&gt;().from("player_stats").select().single();
+            </div>
+
+            <div class="footer-nav">
+                <a href="#" class="nav-button" onclick="switchPage('authentication')">← Previous: Authentication</a>
+                <a href="#" class="nav-button" onclick="switchPage('api')">Next: API Reference →</a>
+            </div>
+        </section>
+
+        <section id="api" class="content-section">
+            <h1>API Reference</h1>
+            <p>Complete reference for PlayFab Port classes and methods.</p>
+
+            <h2>SupabaseManager</h2>
+            <p>The main singleton that manages your Supabase connection.</p>
+
+            <h3>Methods</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Method</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Initialize(url, anonKey)</td>
+                        <td>Initialize Supabase connection</td>
+                    </tr>
+                    <tr>
+                        <td>IsAuthenticated()</td>
+                        <td>Check if user is logged in</td>
+                    </tr>
+                    <tr>
+                        <td>GetCurrentUserId()</td>
+                        <td>Get authenticated user ID</td>
+                    </tr>
+                    <tr>
+                        <td>from(tableName)</td>
+                        <td>Access table for queries</td>
+                    </tr>
+                    <tr>
+                        <td>Logout()</td>
+                        <td>Sign out current user</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>GeneralAuth</h2>
+            <p>Authentication for standard games.</p>
+
+            <h3>Methods</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Method</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>SignUp(email, password, username)</td>
+                        <td>Create new player account</td>
+                    </tr>
+                    <tr>
+                        <td>SignIn(email, password)</td>
+                        <td>Authenticate existing player</td>
+                    </tr>
+                    <tr>
+                        <td>SignOut()</td>
+                        <td>Logout current player</td>
+                    </tr>
+                    <tr>
+                        <td>ResetPassword(email)</td>
+                        <td>Send password reset email</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>GorillaAuth</h2>
+            <p>Device-based authentication for VR games.</p>
+
+            <h3>Methods</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Method</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>AuthenticateGorilla()</td>
+                        <td>Authenticate using device ID</td>
+                    </tr>
+                    <tr>
+                        <td>GetDeviceId()</td>
+                        <td>Get current device ID</td>
+                    </tr>
+                    <tr>
+                        <td>SetUsername(name)</td>
+                        <td>Update player username</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="footer-nav">
+                <a href="#" class="nav-button" onclick="switchPage('database')">← Previous: Database</a>
+                <a href="#" class="nav-button" onclick="switchPage('security')">Next: Security →</a>
+            </div>
+        </section>
+
+        <section id="security" class="content-section">
+            <h1>Security</h1>
+            <p>Best practices and security considerations for using PlayFab Port.</p>
+
+            <h2>Core Security Principles</h2>
+
+            <h3>Never Expose Service Keys</h3>
+            <p>Always use the Anon Key in your client application. The Service Key should only ever be used in server-side code or Edge Functions.</p>
+
+            <h3>Row Level Security</h3>
+            <p>RLS policies are enabled by default on all tables. Players can only access their own data through the Anon Key.</p>
+
+            <h3>Server-Side Validation</h3>
+            <p>Critical operations like currency transfers, item grants, or stat modifications must run on the server via Edge Functions.</p>
+
+            <h2>Data Protection</h2>
+
+            <div class="card">
+                <h3>Encryption in Transit</h3>
+                <p>All data is transmitted via HTTPS. Supabase uses TLS 1.2+ by default.</p>
+            </div>
+
+            <div class="card">
+                <h3>Authentication Tokens</h3>
+                <p>JWT tokens are short-lived. The wrapper automatically refreshes them before expiration.</p>
+            </div>
+
+            <div class="card">
+                <h3>Session Management</h3>
+                <p>Sessions are stored locally with encryption. Clear sessions on logout and when switching devices.</p>
+            </div>
+
+            <h2>Common Vulnerabilities to Avoid</h2>
+            <div class="list-item">Do not modify user ID in requests on the client</div>
+            <div class="list-item">Do not trust client-side stat calculations – validate on server</div>
+            <div class="list-item">Do not store sensitive data unencrypted in PlayerPrefs</div>
+            <div class="list-item">Do not disable RLS policies for convenience</div>
+
+            <h2>Auditing and Monitoring</h2>
+            <p>Enable Supabase audit logs in your dashboard to track all database changes. Monitor for suspicious patterns like:</p>
+            <div class="list-item">Bulk stat modifications</div>
+            <div class="list-item">Unusual query patterns</div>
+            <div class="list-item">Failed authentication attempts</div>
+
+            <div class="footer-nav">
+                <a href="#" class="nav-button" onclick="switchPage('api')">← Previous: API Reference</a>
+                <a href="#" class="nav-button" onclick="switchPage('examples')">Next: Examples →</a>
+            </div>
+        </section>
+
+        <section id="examples" class="content-section">
+            <h1>Examples</h1>
+            <p>Learn through practical code examples.</p>
+
+            <h2>Complete Game Initialization</h2>
+            <div class="code-block">
+public class GameManager : MonoBehaviour {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;private SupabaseManager supabaseManager;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;private GeneralAuth auth;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;void Start() {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;supabaseManager = GetComponent&lt;SupabaseManager&gt;();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;auth = GetComponent&lt;GeneralAuth&gt;();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (supabaseManager.IsAuthenticated()) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LoadPlayerData();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} else {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ShowLoginUI();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+}
+            </div>
+
+            <h2>Fetching Player Stats</h2>
+            <div class="code-block">
+async void LoadPlayerData() {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;try {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var response = await supabaseManager<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.from("player_stats")<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.select()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.single();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var stats = JsonConvert.DeserializeObject&lt;PlayerStats&gt;(response);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DisplayStats(stats);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;} catch (Exception e) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Debug.LogError("Failed to load stats: " + e.Message);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+}
+            </div>
+
+            <h2>Real-Time Leaderboard Updates</h2>
+            <div class="code-block">
+void SubscribeToLeaderboard() {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;var subscription = supabaseManager<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.from("leaderboards")<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.on(RealtimeEventType.All, OnLeaderboardChange)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.Subscribe();<br>
+}<br>
+<br>
+void OnLeaderboardChange(RealtimePayload payload) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;// Update UI with new leaderboard state<br>
+&nbsp;&nbsp;&nbsp;&nbsp;RefreshLeaderboardDisplay();<br>
+}
+            </div>
+
+            <div class="footer-nav">
+                <a href="#" class="nav-button" onclick="switchPage('security')">← Previous: Security</a>
+                <div></div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        const navLinks = document.querySelectorAll('.nav-link');
+        const sections = document.querySelectorAll('.content-section');
+
+        function switchPage(pageName) {
+            event.preventDefault();
+
+            sections.forEach(section => section.classList.remove('active'));
+            navLinks.forEach(link => link.classList.remove('active'));
+
+            const targetSection = document.getElementById(pageName);
+            const targetLink = document.querySelector(`[data-page="${pageName}"]`);
+
+            if (targetSection) {
+                targetSection.classList.add('active');
+            }
+
+            if (targetLink) {
+                targetLink.classList.add('active');
+            }
+
+            window.scrollTo(0, 0);
+        }
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const pageName = link.getAttribute('data-page');
+                switchPage(pageName);
+            });
+        });
+    </script>
+</body>
+</html>

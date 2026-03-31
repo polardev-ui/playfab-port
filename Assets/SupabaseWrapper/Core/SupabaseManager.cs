@@ -8,8 +8,8 @@ public class SupabaseManager : MonoBehaviour
     public static SupabaseManager Instance { get; private set; }
 
     [Header("Configuration")]
-    public string supabaseUrl = "https://your-project.supabase.co";
-    public string supabaseAnonKey = "your-anon-key";
+    public string supabaseUrl = "https://your-project.supabase.co"; // change this bit
+    public string supabaseAnonKey = "your-anon-key"; // this bit too
 
     void Awake()
     {
