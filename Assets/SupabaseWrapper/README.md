@@ -7,7 +7,7 @@ This wrapper is designed to replace the core functionality of PlayFab with **Sup
 To ensure this tool is useful for both the "Gorilla Tag" modding community and general indie devs, the wrapper is split into two modules:
 
 * **`/Core`**: The engine. Contains the `SupabaseManager` singleton.
-* **`/Copy`**: Specialized scripts for **Gorilla Tag replicas**. Uses Device ID auth and mirrors `GorillaComputer` variables (Colors, Turn speeds, Comp Queue).
+* **`/Copy`**: Specialized scripts for **Gorilla Tag Copies**. Uses Device ID auth and mirrors `GorillaComputer` variables (Colors, Turn speeds, Comp Queue).
 * **`/General`**: Standard boilerplate for any Unity project (Email/Password auth, XP, Level, and Currency).
 
 ---
