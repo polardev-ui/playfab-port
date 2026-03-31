@@ -33,7 +33,7 @@
     </td>
     <td align="center" valign="center">
       <a href="https://github.com/compassplate">
-        <img src="https://compassplate.vercel.app/compass.gif" width="100px;" style="border-radius: 50%; aspect-ratio: 1/1; object-fit: cover;" alt="compassplate"/><br />
+        <img src="https://avatars.githubusercontent.com/u/270543794?v=4" width="100px;" style="border-radius: 50%; aspect-ratio: 1/1; object-fit: cover;" alt="compassplate"/><br />
         <sub><b>compassplate</b></sub>
       </a>
     </td>
