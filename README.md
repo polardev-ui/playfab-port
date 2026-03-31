@@ -1,19 +1,35 @@
-# PlayFab to Supabase porting
-**This is a full, comprehensive guide to changing your Unity game from PlayFab to Supabase**
+# PlayFab to Supabase Porting
+**A full, comprehensive guide and SDK wrapper for migrating Unity games from PlayFab to Supabase.**
 
 ## Why?
-**PlayFab recently limited their free tier to allow users to have a maximum of 1k users, instead of the old 100k users that we generously got for free.**
-**Until PlayFab decides to update their app and restore the 100k users we once had, this repository stays open and active.**
-**We only know that PlayFab did this because they're switching from Development Mode to Foundation Mode, forcing people to pay for their paid plans/tiers.**
+**PlayFab recently limited their free tier to a maximum of 1k users, a massive drop from the 100k users previously available.** As they transition from **Development Mode** to **Foundation Mode**, developers are being squeezed into expensive paid tiers. Until PlayFab restores the accessibility that helped indie developers grow, this repository will remain an active, open-source alternative.
 
-## How?
-**Supabase uses Restful API's and Postgres, which isn't all that different to PlayFab. If anything, it's more customizable and secure by default.**
-**Supabase is a Backend as a Service (BaaS), and PlayFab is a Gaming Backend as a Service (GBaaS), meaning we get the same features, except for things like Leaderboard, Economy, Catalogs, etc.**
-**Unity can collect data from Meta and Pico devices using `SystemInfo.deviceUniqueIdentifier` which is an easy way to get a unique string identifier for that user and device, allowing us to put that string into a fake email and an administrator password (set by you) for all accounts, allowing users to authenticate as they would if this were a web application.**
+## The Architecture
+Supabase is a **Backend as a Service (BaaS)** powered by **PostgreSQL**. While PlayFab is a **Gaming Backend (GBaaS)**, we can replicate its gaming features (Leaderboards, Economy, Inventories) using Supabase's Relational Database and Edge Functions.
+
+
+
+## Key Features
+* **Device-Based Auth:** Replicates PlayFab's `LoginWithCustomID` using `SystemInfo.deviceUniqueIdentifier`.
+* **Relational Data:** Moves away from PlayFab's messy JSON blobs to structured SQL tables.
+* **Edge Logic:** Uses Supabase Edge Functions (TypeScript) to replace PlayFab CloudScript for secure, server-side operations.
+* **Realtime Meta:** Leverages Supabase Realtime for friend lists and global alerts, keeping Photon focused strictly on high-tick physics.
+
+## Quick Start
+1.  **Database Setup:** Run the provided `schema.sql` in your Supabase SQL Editor to generate the `profiles`, `inventories`, and `leaderboards` tables.
+2.  **Unity Integration:** Drop the `SupabaseWrapper` folder into your `Assets` directory.
+3.  **Configuration:** Update the `SupabaseConfig` ScriptableObject with your Supabase URL and Anon Key.
+4.  **Authentication:**
+    ```csharp
+    await SupabaseManager.Instance.LoginWithDevice();
+    ```
+
+## Security & Best Practices
+* **Row Level Security (RLS):** All provided SQL templates include RLS policies to ensure players can only modify their own stats and inventories.
+* **No Hardcoded Secrets:** This wrapper is designed to work with the **Anon Key** only. Sensitive operations (like adding currency) are handled via **Edge Functions** to prevent client-side hacking.
 
 ## Who?
-**This repository is actively being worked on and contributed to by several well known developers, including myself (polar) and we're working on this to combat PlayFabs restrictions.**
-**You can view all the contributors at the bottom of this file.**
+This repository is a community effort to combat PlayFab's restrictions. It is actively maintained by **Polar** and a group of developers dedicated to keeping indie game backends open and affordable.
 
 ## Contributors
 
@@ -39,3 +55,6 @@
     </td>
   </tr>
 </table>
+
+## License
+This project is licensed under the **GNU GPL v3**. This ensures that the core porting logic remains open-source and free for all developers, preventing any single entity from privatizing this community resource.
