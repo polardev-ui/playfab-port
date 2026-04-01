@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS public.profiles (
     green_value FLOAT4 DEFAULT 0.0,
     blue_value FLOAT4 DEFAULT 0.0,
     
-=    stick_turning TEXT DEFAULT 'SNAP', 
+    stick_turning TEXT DEFAULT 'SNAP', 
     turn_factor INT4 DEFAULT 4,
     ptt_type TEXT DEFAULT 'ALL CHAT',
     voice_chat_on BOOLEAN DEFAULT TRUE,
